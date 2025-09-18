@@ -1,0 +1,35 @@
+{
+	"name": "Fake Shop DevContainer",
+	"dockerComposeFile": [
+		"../compose.yml",
+		"docker-compose.override.yml"
+	],
+	"service": "ecommerce",
+	"workspaceFolder": "/app",
+	"postCreateCommand": "mkdir -p /tmp/metrics && pip install -r src/requirements.txt",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"humao.rest-client",
+				"ms-azuretools.vscode-docker"
+			],
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"python.testing.pytestEnabled": true,
+				"python.testing.pytestArgs": [
+					"tests"
+				]
+			}
+		}
+	},
+	"remoteEnv": {
+		"FLASK_ENV": "development",
+		"PROMETHEUS_MULTIPROC_DIR": "/tmp/metrics"
+	},
+	"forwardPorts": [
+		5000,
+		5432
+	]
+}

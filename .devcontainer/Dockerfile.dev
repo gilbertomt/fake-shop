@@ -1,0 +1,6 @@
+FROM python:3.12.11-alpine3.22
+RUN adduser -D appuser
+USER appuser
+WORKDIR /app
+EXPOSE 5000
+CMD [ "tail", "-f", "/dev/null" ]

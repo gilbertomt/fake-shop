@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:17.6-alpine3.22
+    container_name: fake_shop_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ecommerce
+      POSTGRES_DB: ecommerce
+      POSTGRES_PASSWORD: Pg1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgre_data:/var/lib/postgresql/data
+    networks:
+      - fake_shop_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  ecommerce:
+    container_name: fake_shop_app
+    image: fake_shop_app:v1
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FLASK_APP: index.py
+      FLASK_ENV: production
+      PROMETHEUS_MULTIPROC_DIR: /tmp/metrics
+      DB_HOST: db
+      DB_USER: ecommerce
+      DB_PASSWORD: Pg1234
+      DB_NAME: ecommerce
+      DB_PORT: "5432"
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - fake_shop_network
+
+networks:
+    fake_shop_network:
+        name: fake_shop_network
+        driver: bridge
+
+volumes:
+   postgre_data:
+       name: fake_shop_db

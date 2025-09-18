@@ -1,0 +1,25 @@
+services:
+  db:
+    ports:
+      - "5432:5432"
+
+  ecommerce:
+    container_name: fake_shop_app
+    image: fake_shop_app:v1
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile.dev
+    environment:
+      FLASK_APP: src/index.py
+      FLASK_ENV: development
+      DB_HOST: db
+      DB_USER: ecommerce
+      DB_PASSWORD: Pg1234
+      DB_NAME: ecommerce
+      DB_PORT: "5432"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
